@@ -5,7 +5,10 @@
 
 import { formatMoney } from '../utils/api'
 
-export default function Analytics({ summary, loading }) {
+export default function Analytics({ summary, loading, error }) {
+  if (error) {
+    return <p style={{ color: '#888', padding: 20 }}>Error loading analytics. Check the error banner above.</p>
+  }
   if (loading || !summary) {
     return <p style={{ color: '#888', padding: 20 }}>Loading...</p>
   }

@@ -6,9 +6,12 @@
 import { useState } from 'react'
 import { formatMoney, formatDate } from '../utils/api'
 
-export default function ExpenseList({ expenses, onEdit, onDelete, loading }) {
+export default function ExpenseList({ expenses, onEdit, onDelete, loading, error }) {
   const [confirmId, setConfirmId] = useState(null)
 
+  if (error) {
+    return <p style={{ color: '#888', padding: 20 }}>Error loading expenses. Check the error banner above.</p>
+  }
   if (loading) {
     return <p style={{ color: '#888', padding: 20 }}>Loading...</p>
   }
