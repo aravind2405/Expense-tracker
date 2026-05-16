@@ -20,9 +20,11 @@ export default function App() {
   const [filterCategory, setFilterCategory] = useState('All')
   const [filterMonth, setFilterMonth] = useState('')
   const [toast, setToast] = useState('')
+  const [error, setError] = useState(null)
 
-  const loadData = useCallback(async () => {
+const loadData = useCallback(async () => {
     setLoading(true)
+    setError(null)
     try {
       const params = {}
       if (filterCategory !== 'All') params.category = filterCategory
@@ -34,7 +36,7 @@ export default function App() {
       setExpenses(expenseData)
       setSummary(summaryData)
     } catch (err) {
-      showToast('Could not connect to the server.')
+      setError('Could not connect to the server. Please make sure the backend is running and try again.')
     } finally {
       setLoading(false)
     }
@@ -114,6 +116,12 @@ export default function App() {
       </div>
 
       <div style={styles.main}>
+        {error && (
+          <div style={styles.errorBanner}>
+            <span>{error}</span>
+            <button style={styles.retryBtn} onClick={loadData}>Retry</button>
+          </div>
+        )}
         {view === 'expenses' && (
           <div>
             <div style={styles.filters}>
@@ -271,5 +279,26 @@ const styles = {
     padding: '10px 16px',
     borderRadius: 4,
     fontSize: 13,
+  },
+  errorBanner: {
+    background: '#fdecea',
+    border: '1px solid #f5c6cb',
+    color: '#a02622',
+    padding: '12px 16px',
+    borderRadius: 4,
+    marginBottom: 16,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    fontSize: 13,
+  },
+  retryBtn: {
+    padding: '5px 12px',
+    border: '1px solid #a02622',
+    borderRadius: 3,
+    background: 'white',
+    color: '#a02622',
+    fontSize: 12,
+    cursor: 'pointer',
   },
 }
