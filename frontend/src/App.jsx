@@ -21,6 +21,8 @@ export default function App() {
   const [filterMonth, setFilterMonth] = useState('')
   const [toast, setToast] = useState('')
   const [error, setError] = useState(null)
+  const [hoveredButton, setHoveredButton] = useState(null)
+  
 
 const loadData = useCallback(async () => {
     setLoading(true)
@@ -255,7 +257,7 @@ const styles = {
     color: '#444',
     marginBottom: 14,
   },
-  btnPrimary: {
+btnPrimary: {
     padding: '7px 14px',
     border: 'none',
     borderRadius: 3,
@@ -263,11 +265,12 @@ const styles = {
     color: 'white',
     fontSize: 13,
   },
-  btnSecondary: {
-    padding: '5px 12px',
-    border: '1px solid #ccc',
+btnPrimary: {
+    padding: '7px 14px',
+    border: 'none',
     borderRadius: 3,
-    background: 'white',
+    background: '#222',
+    color: 'white',
     fontSize: 13,
     cursor: 'pointer',
   },
