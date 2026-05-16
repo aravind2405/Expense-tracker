@@ -164,12 +164,13 @@ const loadData = useCallback(async () => {
               onEdit={setEditingExpense}
               onDelete={handleDelete}
               loading={loading}
+              error={error}
             />
           </div>
         )}
 
         {view === 'analytics' && (
-          <Analytics summary={summary} loading={loading} />
+          <Analytics summary={summary} loading={loading} error={error} />
         )}
       </div>
 
