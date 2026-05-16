@@ -1,0 +1,12 @@
+[
+  { "title": "Woolworths grocery run", "category": "Food", "amount": 87.50, "date": "2025-03-01", "description": "Weekly groceries" },
+  { "title": "Opal card top-up", "category": "Transport", "amount": 40.00, "date": "2025-03-03", "description": "" },
+  { "title": "Netflix subscription", "category": "Entertainment", "amount": 22.99, "date": "2025-03-05", "description": "" },
+  { "title": "Rent - March", "category": "Housing", "amount": 1200.00, "date": "2025-03-07", "description": "Monthly rent" },
+  { "title": "Thai takeaway", "category": "Food", "amount": 18.50, "date": "2025-03-10", "description": "" },
+  { "title": "Gym membership", "category": "Health", "amount": 55.00, "date": "2025-03-12", "description": "" },
+  { "title": "Textbooks", "category": "Education", "amount": 112.00, "date": "2025-03-15", "description": "" },
+  { "title": "Electricity bill", "category": "Utilities", "amount": 145.00, "date": "2025-03-18", "description": "" },
+  { "title": "Uber to airport", "category": "Transport", "amount": 34.00, "date": "2025-03-20", "description": "" },
+  { "title": "New headphones", "category": "Shopping", "amount": 79.00, "date": "2025-03-22", "description": "" }
+]
