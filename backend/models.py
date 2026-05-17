@@ -21,3 +21,11 @@ class ExpenseUpdate(BaseModel):
     amount: Optional[float] = None
     date: Optional[str] = None
     description: Optional[str] = None
+
+class UserCreate(BaseModel):
+    email: str
+    password: str
+
+class UserLogin(BaseModel):
+    email: str
+    password: str

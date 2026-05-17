@@ -6,7 +6,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from routers import expenses
+from routers import expenses, auth
 from database.connection import connect_to_mongo, close_mongo_connection
 
 
@@ -28,3 +28,4 @@ app.add_middleware(
 )
 
 app.include_router(expenses.router, prefix="/api/expenses")
+app.include_router(auth.router, prefix="/api/auth")
