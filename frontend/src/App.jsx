@@ -8,8 +8,13 @@ import { api, CATEGORIES, formatMoney } from './utils/api'
 import ExpenseForm from './components/ExpenseForm'
 import ExpenseList from './components/ExpenseList'
 import Analytics from './components/Analytics'
+import Login from './components/Login'
+import Register from './components/Register'
 
 export default function App() {
+  const [token, setToken] = useState(localStorage.getItem('token'))
+  const [userEmail, setUserEmail] = useState(localStorage.getItem('email'))
+  const [authView, setAuthView] = useState('login')
   const [view, setView] = useState('expenses')
   const [expenses, setExpenses] = useState([])
   const [summary, setSummary] = useState(null)
@@ -21,10 +26,8 @@ export default function App() {
   const [filterMonth, setFilterMonth] = useState('')
   const [toast, setToast] = useState('')
   const [error, setError] = useState(null)
-  const [hoveredButton, setHoveredButton] = useState(null)
-  
 
-const loadData = useCallback(async () => {
+  const loadData = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -45,12 +48,28 @@ const loadData = useCallback(async () => {
   }, [filterCategory, filterMonth])
 
   useEffect(() => {
-    loadData()
-  }, [loadData])
+    if (token) {
+      loadData()
+    }
+  }, [loadData, token])
 
   function showToast(msg) {
     setToast(msg)
     setTimeout(() => setToast(''), 3000)
+  }
+
+  function handleLogin(data) {
+    setToken(data.access_token)
+    setUserEmail(localStorage.getItem('email'))
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('token')
+    localStorage.removeItem('role')
+    localStorage.removeItem('email')
+    setToken(null)
+    setUserEmail(null)
+    setAuthView('login')
   }
 
   async function handleCreate(data) {
@@ -93,13 +112,36 @@ const loadData = useCallback(async () => {
 
   const total = expenses.reduce((sum, e) => sum + e.amount, 0)
 
+  if (!token) {
+    if (authView === 'login') {
+      return (
+        <Login
+          onLogin={handleLogin}
+          onSwitchToRegister={() => setAuthView('register')}
+        />
+      )
+    } else {
+      return (
+        <Register
+          onSwitchToLogin={() => setAuthView('login')}
+        />
+      )
+    }
+  }
+
   return (
     <div>
       <div style={styles.header}>
         <h1 style={styles.headerTitle}>Expense Tracker</h1>
-        <button style={styles.btnPrimary} onClick={() => setShowForm(true)}>
-          Add Expense
-        </button>
+        <div style={styles.headerRight}>
+          <span style={styles.userEmail}>{userEmail}</span>
+          <button style={styles.btnPrimary} onClick={() => setShowForm(true)}>
+            Add Expense
+          </button>
+          <button style={styles.btnSecondary} onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
       </div>
 
       <div style={styles.tabs}>
@@ -210,6 +252,16 @@ const styles = {
     fontSize: '1.1rem',
     fontWeight: 'bold',
   },
+  headerRight: {
+    display: 'flex',
+    gap: 10,
+    alignItems: 'center',
+  },
+  userEmail: {
+    fontSize: 12,
+    color: '#666',
+    marginRight: 4,
+  },
   tabs: {
     display: 'flex',
     borderBottom: '1px solid #ddd',
@@ -257,7 +309,7 @@ const styles = {
     color: '#444',
     marginBottom: 14,
   },
-btnPrimary: {
+  btnPrimary: {
     padding: '7px 14px',
     border: 'none',
     borderRadius: 3,
@@ -265,12 +317,11 @@ btnPrimary: {
     color: 'white',
     fontSize: 13,
   },
-btnPrimary: {
-    padding: '7px 14px',
-    border: 'none',
+  btnSecondary: {
+    padding: '5px 12px',
+    border: '1px solid #ccc',
     borderRadius: 3,
-    background: '#222',
-    color: 'white',
+    background: 'white',
     fontSize: 13,
     cursor: 'pointer',
   },
