@@ -6,10 +6,24 @@
 const BASE = '/api/expenses'
 
 async function request(url, options = {}) {
+  const token = localStorage.getItem('token')
+  const headers = { 'Content-Type': 'application/json' }
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+
   const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     ...options,
   })
+
+  if (res.status === 401) {
+    localStorage.removeItem('token')
+    localStorage.removeItem('role')
+    localStorage.removeItem('email')
+    window.location.reload()
+    return
+  }
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: 'Something went wrong' }))
