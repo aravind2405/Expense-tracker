@@ -1,13 +1,14 @@
 # this is where all the expense API routes are defined
 # i put create, read, update and delete all in one place to keep things organized
-# the analytics route at the top groups expenses by category using MongoDB aggregation
+# every route now needs a logged in user so people only see their own expenses
 # the serialize function converts MongoDB documents into a format the frontend can use
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import Optional
 from bson import ObjectId
 from database.connection import get_database
 from models import ExpenseCreate, ExpenseUpdate
+from routers.auth import get_current_user
 
 
 router = APIRouter()
@@ -25,24 +26,28 @@ def serialize(doc):
 
 
 @router.post("/")
-async def create_expense(expense: ExpenseCreate):
+async def create_expense(expense: ExpenseCreate, user: dict = Depends(get_current_user)):
     db = get_database()
     doc = expense.model_dump()
+    doc["user_email"] = user["email"]
     result = await db.expenses.insert_one(doc)
     created = await db.expenses.find_one({"_id": result.inserted_id})
     return serialize(created)
 
 
 @router.get("/analytics/summary")
-async def get_summary():
+async def get_summary(user: dict = Depends(get_current_user)):
     db = get_database()
+    email = user["email"]
 
     by_category = await db.expenses.aggregate([
+        {"$match": {"user_email": email}},
         {"$group": {"_id": "$category", "total": {"$sum": "$amount"}, "count": {"$sum": 1}}},
         {"$sort": {"total": -1}}
     ]).to_list(100)
 
     grand_total = await db.expenses.aggregate([
+        {"$match": {"user_email": email}},
         {"$group": {"_id": None, "total": {"$sum": "$amount"}, "count": {"$sum": 1}}}
     ]).to_list(1)
 
@@ -59,10 +64,11 @@ async def get_summary():
 @router.get("/")
 async def get_expenses(
     category: Optional[str] = Query(None),
-    month: Optional[str] = Query(None)
+    month: Optional[str] = Query(None),
+    user: dict = Depends(get_current_user)
 ):
     db = get_database()
-    query = {}
+    query = {"user_email": user["email"]}
 
     if category and category != "All":
         query["category"] = category
@@ -76,8 +82,14 @@ async def get_expenses(
 
 
 @router.put("/{expense_id}")
-async def update_expense(expense_id: str, update: ExpenseUpdate):
+async def update_expense(expense_id: str, update: ExpenseUpdate, user: dict = Depends(get_current_user)):
     db = get_database()
+    existing = await db.expenses.find_one({"_id": ObjectId(expense_id)})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Expense not found")
+    if existing.get("user_email") != user["email"]:
+        raise HTTPException(status_code=403, detail="Not allowed to edit this expense")
+
     data = {k: v for k, v in update.model_dump().items() if v is not None}
     await db.expenses.update_one({"_id": ObjectId(expense_id)}, {"$set": data})
     updated = await db.expenses.find_one({"_id": ObjectId(expense_id)})
@@ -85,8 +97,12 @@ async def update_expense(expense_id: str, update: ExpenseUpdate):
 
 
 @router.delete("/{expense_id}", status_code=204)
-async def delete_expense(expense_id: str):
+async def delete_expense(expense_id: str, user: dict = Depends(get_current_user)):
     db = get_database()
-    result = await db.expenses.delete_one({"_id": ObjectId(expense_id)})
-    if result.deleted_count == 0:
+    existing = await db.expenses.find_one({"_id": ObjectId(expense_id)})
+    if not existing:
         raise HTTPException(status_code=404, detail="Expense not found")
+    if existing.get("user_email") != user["email"]:
+        raise HTTPException(status_code=403, detail="Not allowed to delete this expense")
+
+    await db.expenses.delete_one({"_id": ObjectId(expense_id)})
