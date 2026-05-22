@@ -9,6 +9,7 @@ from bson import ObjectId
 from database.connection import get_database
 from models import ExpenseCreate, ExpenseUpdate
 from routers.auth import get_current_user
+from activity import log_activity
 
 
 router = APIRouter()
@@ -32,6 +33,7 @@ async def create_expense(expense: ExpenseCreate, user: dict = Depends(get_curren
     doc["user_email"] = user["email"]
     result = await db.expenses.insert_one(doc)
     created = await db.expenses.find_one({"_id": result.inserted_id})
+    await log_activity(user["email"], f"created expense '{expense.title}'")
     return serialize(created)
 
 
@@ -93,6 +95,7 @@ async def update_expense(expense_id: str, update: ExpenseUpdate, user: dict = De
     data = {k: v for k, v in update.model_dump().items() if v is not None}
     await db.expenses.update_one({"_id": ObjectId(expense_id)}, {"$set": data})
     updated = await db.expenses.find_one({"_id": ObjectId(expense_id)})
+    await log_activity(user["email"], "updated an expense")
     return serialize(updated)
 
 
@@ -106,3 +109,4 @@ async def delete_expense(expense_id: str, user: dict = Depends(get_current_user)
         raise HTTPException(status_code=403, detail="Not allowed to delete this expense")
 
     await db.expenses.delete_one({"_id": ObjectId(expense_id)})
+    await log_activity(user["email"], f"deleted an expense")
