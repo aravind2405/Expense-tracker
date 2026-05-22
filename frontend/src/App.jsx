@@ -24,6 +24,7 @@ export default function App() {
   const [editingExpense, setEditingExpense] = useState(null)
   const [filterCategory, setFilterCategory] = useState('All')
   const [filterMonth, setFilterMonth] = useState('')
+  const [searchText, setSearchText] = useState('')
   const [toast, setToast] = useState('')
   const [error, setError] = useState(null)
 
@@ -110,7 +111,10 @@ export default function App() {
     }
   }
 
-  const total = expenses.reduce((sum, e) => sum + e.amount, 0)
+  const visibleExpenses = expenses.filter(e =>
+    e.title.toLowerCase().includes(searchText.toLowerCase())
+  )
+  const total = visibleExpenses.reduce((sum, e) => sum + e.amount, 0)
 
   if (!token) {
     if (authView === 'login') {
@@ -182,9 +186,10 @@ export default function App() {
 
               <input
                 style={styles.select}
-                type="month"
-                value={filterMonth}
-                onChange={e => setFilterMonth(e.target.value)}
+                type="text"
+                placeholder="Search by title"
+                value={searchText}
+                onChange={e => setSearchText(e.target.value)}
               />
 
               <button
@@ -200,11 +205,11 @@ export default function App() {
 
             <p style={styles.total}>
               Total: <strong>{formatMoney(total)}</strong> &nbsp;|&nbsp;
-              {expenses.length} expense{expenses.length !== 1 ? 's' : ''}
+              {visibleExpenses.length} expense{visibleExpenses.length !== 1 ? 's' : ''}
             </p>
 
             <ExpenseList
-              expenses={expenses}
+              expenses={visibleExpenses}
               onEdit={setEditingExpense}
               onDelete={handleDelete}
               loading={loading}
