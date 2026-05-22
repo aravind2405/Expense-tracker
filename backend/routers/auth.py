@@ -10,6 +10,7 @@ from jose import jwt, JWTError
 from datetime import datetime, timedelta
 from models import UserCreate, UserLogin
 from database.connection import get_database
+from activity import log_activity
 
 router = APIRouter()
 
@@ -61,6 +62,7 @@ async def register(user: UserCreate):
         "created_at": datetime.utcnow().isoformat()
     }
     await db.users.insert_one(new_user)
+    await log_activity(user.email, "registered an account")
     return {"message": "User created successfully"}
 
 
@@ -75,4 +77,5 @@ async def login(user: UserLogin):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     token = create_access_token({"sub": found["email"], "role": found["role"]})
+    await log_activity(found["email"], "logged in")
     return {"access_token": token, "token_type": "bearer", "role": found["role"]}
