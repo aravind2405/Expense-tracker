@@ -79,3 +79,34 @@ async def login(user: UserLogin):
     token = create_access_token({"sub": found["email"], "role": found["role"]})
     await log_activity(found["email"], "logged in")
     return {"access_token": token, "token_type": "bearer", "role": found["role"]}
+@router.get("/users")
+async def list_users(user: dict = Depends(get_current_user)):
+    if user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    db = get_database()
+    cursor = db.users.find()
+    users = await cursor.to_list(200)
+    return [
+        {
+            "id": str(u["_id"]),
+            "email": u["email"],
+            "role": u.get("role", "user"),
+            "created_at": u.get("created_at", "")
+        }
+        for u in users
+    ]
+
+
+@router.delete("/users/{user_email}", status_code=204)
+async def delete_user(user_email: str, user: dict = Depends(get_current_user)):
+    if user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    if user_email == user["email"]:
+        raise HTTPException(status_code=400, detail="You cannot delete your own account")
+
+    db = get_database()
+    result = await db.users.delete_one({"email": user_email})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
