@@ -10,10 +10,12 @@ import ExpenseList from './components/ExpenseList'
 import Analytics from './components/Analytics'
 import Login from './components/Login'
 import Register from './components/Register'
+import Admin from './components/Admin'
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'))
   const [userEmail, setUserEmail] = useState(localStorage.getItem('email'))
+  const [userRole, setUserRole] = useState(localStorage.getItem('role'))
   const [authView, setAuthView] = useState('login')
   const [view, setView] = useState('expenses')
   const [expenses, setExpenses] = useState([])
@@ -62,6 +64,7 @@ export default function App() {
   function handleLogin(data) {
     setToken(data.access_token)
     setUserEmail(localStorage.getItem('email'))
+    setUserRole(localStorage.getItem('role'))
   }
 
   function handleLogout() {
@@ -70,6 +73,7 @@ export default function App() {
     localStorage.removeItem('email')
     setToken(null)
     setUserEmail(null)
+    setUserRole(null)
     setAuthView('login')
   }
 
@@ -161,8 +165,15 @@ export default function App() {
         >
           Analytics
         </button>
+        {userRole === 'admin' && (
+          <button
+            style={view === 'admin' ? styles.tabActive : styles.tab}
+            onClick={() => setView('admin')}
+          >
+            Admin
+          </button>
+        )}
       </div>
-
       <div style={styles.main}>
         {error && (
           <div style={styles.errorBanner}>
@@ -220,6 +231,10 @@ export default function App() {
 
         {view === 'analytics' && (
           <Analytics summary={summary} loading={loading} error={error} />
+        )}
+
+        {view === 'admin' && userRole === 'admin' && (
+          <Admin />
         )}
       </div>
 
