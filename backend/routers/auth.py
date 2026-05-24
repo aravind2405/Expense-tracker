@@ -8,7 +8,7 @@ from fastapi.security import OAuth2PasswordBearer
 import bcrypt
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
-from models import UserCreate, UserLogin
+from models import UserCreate, UserLogin, PasswordChange
 from database.connection import get_database
 from activity import log_activity
 
@@ -110,3 +110,34 @@ async def delete_user(user_email: str, user: dict = Depends(get_current_user)):
     result = await db.users.delete_one({"email": user_email})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="User not found")
+
+@router.get("/me")
+async def get_my_profile(user: dict = Depends(get_current_user)):
+    db = get_database()
+    found = await db.users.find_one({"email": user["email"]})
+    if not found:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {
+        "email": found["email"],
+        "role": found.get("role", "user"),
+        "created_at": found.get("created_at", "")
+    }
+
+
+@router.put("/change-password")
+async def change_password(data: PasswordChange, user: dict = Depends(get_current_user)):
+    db = get_database()
+    found = await db.users.find_one({"email": user["email"]})
+    if not found:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not verify_password(data.current_password, found["password"]):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+
+    new_hashed = hash_password(data.new_password)
+    await db.users.update_one(
+        {"email": user["email"]},
+        {"$set": {"password": new_hashed}}
+    )
+    await log_activity(user["email"], "changed their password")
+    return {"message": "Password changed successfully"}

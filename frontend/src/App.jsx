@@ -11,6 +11,7 @@ import Analytics from './components/Analytics'
 import Login from './components/Login'
 import Register from './components/Register'
 import Admin from './components/Admin'
+import Profile from './components/Profile'
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('token'))
@@ -165,6 +166,12 @@ export default function App() {
         >
           Analytics
         </button>
+        <button
+          style={view === 'profile' ? styles.tabActive : styles.tab}
+          onClick={() => setView('profile')}
+        >
+          Profile
+        </button>
         {userRole === 'admin' && (
           <button
             style={view === 'admin' ? styles.tabActive : styles.tab}
@@ -236,8 +243,11 @@ export default function App() {
         {view === 'admin' && userRole === 'admin' && (
           <Admin />
         )}
-      </div>
 
+        {view === 'profile' && (
+          <Profile />
+        )}
+      </div>
       {showForm && (
         <ExpenseForm
           onSubmit={handleCreate}
