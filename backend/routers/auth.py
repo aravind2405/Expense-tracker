@@ -11,10 +11,13 @@ from datetime import datetime, timedelta
 from models import UserCreate, UserLogin, PasswordChange
 from database.connection import get_database
 from activity import log_activity
+import os
+from dotenv import load_dotenv
 
 router = APIRouter()
+load_dotenv()
 
-SECRET_KEY = "your-secret-key-change-this-later"
+SECRET_KEY = os.getenv("SECRET_KEY", "fallback-dev-key")
 ALGORITHM = "HS256"
 TOKEN_EXPIRE_MINUTES = 60 * 24
 
