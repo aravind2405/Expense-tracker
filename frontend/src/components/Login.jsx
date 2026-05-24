@@ -133,12 +133,13 @@ const styles = {
   },
   button: {
     width: '100%',
-    padding: '8px',
+    padding: '9px',
     border: 'none',
-    borderRadius: 3,
-    background: '#222',
+    borderRadius: 4,
+    background: '#1d9e75',
     color: 'white',
     fontSize: 13,
+    fontWeight: 'bold',
     marginTop: 6,
   },
   switch: {
@@ -147,13 +148,13 @@ const styles = {
     color: '#555',
     textAlign: 'center',
   },
-  linkBtn: {
+ linkBtn: {
     background: 'none',
     border: 'none',
-    color: '#222',
+    color: '#0f6e56',
     fontWeight: 'bold',
     fontSize: 13,
     textDecoration: 'underline',
     padding: 0,
-  },
+  }, 
 }

@@ -4,7 +4,7 @@
 // if there are no expenses it shows a message instead of an empty table
 
 import { useState } from 'react'
-import { formatMoney, formatDate } from '../utils/api'
+import { formatMoney, formatDate, CATEGORY_COLORS } from '../utils/api'
 
 export default function ExpenseList({ expenses, onEdit, onDelete, loading, error }) {
   const [confirmId, setConfirmId] = useState(null)
@@ -40,7 +40,17 @@ export default function ExpenseList({ expenses, onEdit, onDelete, loading, error
                 <div style={styles.desc}>{expense.description}</div>
               )}
             </td>
-            <td style={styles.td}>{expense.category}</td>
+            <td style={styles.td}>
+              <span style={{
+                background: (CATEGORY_COLORS[expense.category] || CATEGORY_COLORS.Other).bg,
+                color: (CATEGORY_COLORS[expense.category] || CATEGORY_COLORS.Other).text,
+                padding: '3px 9px',
+                borderRadius: 4,
+                fontSize: 12,
+              }}>
+                {expense.category}
+              </span>
+            </td>
             <td style={styles.td}>{formatDate(expense.date)}</td>
             <td style={styles.td}>{formatMoney(expense.amount)}</td>
             <td style={styles.td}>
