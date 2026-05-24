@@ -13,7 +13,22 @@ Authentication: JWT tokens with bcrypt password hashing
 
 ## Workload Allocation
 
-i worked on this assignment individually. all files in this project were written by Aravind Danassegarane.
+i completed this assignment individually, so there are no group members. every file in this project was written by Aravind Danassegarane. the full list of files i wrote:
+
+backend:
+main.py, models.py, activity.py, make_admin.py, requirements.txt
+backend/database: connection.py
+backend/routers: auth.py, expenses.py, activity_routers.py
+
+frontend:
+index.html, package.json, vite.config.js
+frontend/src: App.jsx, main.jsx, index.css
+frontend/src/components: ExpenseForm.jsx, ExpenseList.jsx, Analytics.jsx, Login.jsx, Register.jsx, Admin.jsx, Profile.jsx
+frontend/src/utils: api.js
+
+database: seed_data.json
+
+README.md and .gitignore were also written by me.
 
 ## How to Run It
 
