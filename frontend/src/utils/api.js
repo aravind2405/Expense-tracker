@@ -57,6 +57,18 @@ export const CATEGORIES = [
   'Other',
 ]
 
+export const CATEGORY_COLORS = {
+  Food:          { bg: '#faece7', text: '#993c1d' },
+  Transport:     { bg: '#e6f1fb', text: '#185fa5' },
+  Housing:       { bg: '#eedffe', text: '#3c3489' },
+  Entertainment: { bg: '#fbeaf0', text: '#993556' },
+  Health:        { bg: '#fcebeb', text: '#a32d2d' },
+  Shopping:      { bg: '#faeeda', text: '#854f0b' },
+  Education:     { bg: '#eef3de', text: '#3b6d11' },
+  Utilities:     { bg: '#e1f5ee', text: '#0f6e56' },
+  Other:         { bg: '#f1efe8', text: '#444441' },
+}
+
 export function formatMoney(amount) {
   return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' }).format(amount)
 }

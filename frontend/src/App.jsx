@@ -146,7 +146,7 @@ export default function App() {
           <button style={styles.btnPrimary} onClick={() => setShowForm(true)}>
             Add Expense
           </button>
-          <button style={styles.btnSecondary} onClick={handleLogout}>
+          <button style={styles.btnLogout} onClick={handleLogout}>
             Logout
           </button>
         </div>
@@ -263,7 +263,7 @@ export default function App() {
 const styles = {
   header: {
     padding: '14px 24px',
-    borderBottom: '1px solid #ddd',
+    background: '#1d9e75',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -271,6 +271,7 @@ const styles = {
   headerTitle: {
     fontSize: '1.1rem',
     fontWeight: 'bold',
+    color: 'white',
   },
   headerRight: {
     display: 'flex',
@@ -279,7 +280,7 @@ const styles = {
   },
   userEmail: {
     fontSize: 12,
-    color: '#666',
+    color: '#e1f5ee',
     marginRight: 4,
   },
   tabs: {
@@ -302,10 +303,10 @@ const styles = {
     border: 'none',
     background: 'none',
     fontSize: 13,
-    color: '#111',
+    color: '#0f6e56',
     fontWeight: 'bold',
     cursor: 'pointer',
-    borderBottom: '2px solid #111',
+    borderBottom: '2px solid #1d9e75 ',
     marginBottom: -1,
   },
   main: {
@@ -332,16 +333,27 @@ const styles = {
   btnPrimary: {
     padding: '7px 14px',
     border: 'none',
-    borderRadius: 3,
-    background: '#222',
-    color: 'white',
+    borderRadius: 4,
+    background: 'white',
+    color: '#0f6e56',
     fontSize: 13,
+    fontWeight: 'bold',
+
   },
   btnSecondary: {
     padding: '5px 12px',
     border: '1px solid #ccc',
     borderRadius: 3,
     background: 'white',
+    fontSize: 13,
+    cursor: 'pointer',
+  },
+  btnLogout: {
+    padding: '6px 12px',
+    border: '1px solid #9fe1cb',
+    borderRadius: 4,
+    background: 'transparent',
+    color: 'white',
     fontSize: 13,
     cursor: 'pointer',
   },
