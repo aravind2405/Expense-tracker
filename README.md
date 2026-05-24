@@ -40,8 +40,17 @@ brew services start mongodb-community
 
 Open a terminal and go to the backend folder:
 
+Open a terminal and go to the backend folder:
+
 cd backend
 python3 -m pip install -r requirements.txt
+
+before running the server, copy the example env file to create your own .env:
+
+cp .env.example .env
+
+then start the server:
+
 uvicorn main:app --reload
 
 Open another terminal and go to the frontend folder:
